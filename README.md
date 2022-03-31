@@ -43,8 +43,8 @@ Then wrap your executable with this tool:
 Call this tool as a Lambda extension script (wrapperscript) to preload secret manager secrets to environment variables.
 
 To use this wrapper script, create a Layer including the go binary of this repository.
-Then include the `wrap.sh` in another layer and invoke it by setting `AWS_LAMBDA_EXEC_WRAPPER=/opt/wrap.sh` on your lambda.
-Alternatively, you can use the NodeJS CDK-compatible package which does this for you: TODO CREATE THIS.
+Then include the binary in another layer and invoke it by setting `AWS_LAMBDA_EXEC_WRAPPER=/opt/aws-get-secret` on your lambda.
+Alternatively, you can use the NodeJS CDK-compatible package which does this for you.
 
 ```bash
 npm i aws-get-secret-lambda
