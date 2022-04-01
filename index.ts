@@ -52,6 +52,18 @@ export function createLayerFromNodeModule(construct: Construct) {
   return new lambda.LayerVersion(construct, "aws-get-secret-layer", {
     code: lambda.Code.fromAsset(join(__dirname, "opt")),
     compatibleArchitectures: [Architecture.X86_64],
-    compatibleRuntimes: Runtime.ALL,
+    compatibleRuntimes: [
+      Runtime.NODEJS_10_X,
+      Runtime.NODEJS_12_X,
+      Runtime.NODEJS_14_X,
+      Runtime.GO_1_X,
+      Runtime.PYTHON_3_9,
+      Runtime.PYTHON_3_8,
+      Runtime.PYTHON_3_6,
+      Runtime.PYTHON_2_7,
+      Runtime.JAVA_8,
+      Runtime.JAVA_11,
+      Runtime.PROVIDED,
+    ],
   });
 }
