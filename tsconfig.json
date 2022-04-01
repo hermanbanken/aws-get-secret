@@ -1,7 +1,8 @@
 {
     "extends": "@tsconfig/node14",
     "compilerOptions": {
-      "lib": ["es2020", "ScriptHost"]
+      "lib": ["es2020", "ScriptHost"],
+      "declaration": true
     }
   }
   
