@@ -83,6 +83,10 @@ func PrepareEnvAndFiles(ctx context.Context, a source.AWS, envIn []string) (env 
 		return nil, fmt.Errorf("could not parse secret refs from environment: %w", err)
 	}
 
+	if verbose {
+		log.Println("detected these secret refs", refs)
+	}
+
 	env = envIn
 	if len(refs) > 0 {
 		// Assume a role to retreive the parameter
