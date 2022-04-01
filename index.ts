@@ -30,7 +30,7 @@ export function wrapLambdaWithSecrets(lambda: Lambda, opts: Opts, layer: lambda.
       t: opts.timeout })
     .filter(([_, value]) => typeof value === "string")
     .map(([key, value]) => `-${key} ${value}`).join(" ");
-  lambda.addEnvironment("AWS_LAMBDA_EXEC_WRAPPER", "/opt/aws-get-secret" + args);
+  lambda.addEnvironment("AWS_LAMBDA_EXEC_WRAPPER", "/opt/aws-get-secret " + args);
 }
 
 export function createLayerFromNodeModule(construct: Construct) {
