@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal"
 	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal/source"
+	"github.com/jnovack/flag"
 )
 
 // Constants for default values if none are supplied
@@ -26,7 +26,6 @@ var (
 	timeout     int
 	sessionName string
 	command     []string
-	verbose     bool
 )
 
 type result struct {
@@ -59,7 +58,7 @@ func main() {
 	}
 
 	if len(command) == 1 && command[0] == "noop" {
-		if verbose {
+		if internal.Verbose {
 			log.Printf("INFO: noop")
 		}
 		return
@@ -83,7 +82,7 @@ func PrepareEnvAndFiles(ctx context.Context, a source.AWS, envIn []string) (env 
 		return nil, fmt.Errorf("could not parse secret refs from environment: %w", err)
 	}
 
-	if verbose {
+	if internal.Verbose {
 		log.Println("detected these secret refs", refs)
 	}
 
@@ -145,22 +144,33 @@ func PrepareEnvAndFiles(ctx context.Context, a source.AWS, envIn []string) (env 
 
 func getCommandParams() {
 	// Setup command line args
-	flag.StringVar(&region, "r", DEFAULT_REGION, "The Amazon Region to use")
-	flag.StringVar(&roleArn, "a", "", "The ARN for the role to assume for Secret Access")
-	flag.IntVar(&timeout, "t", DEFAULT_TIMEOUT, "The amount of time to wait for any API call")
-	flag.StringVar(&sessionName, "n", DEFAULT_SESSION, "The name of the session for AWS STS")
-	flag.BoolVar(&verbose, "v", false, "Turn on verbose output")
+	fs := flag.NewFlagSetWithEnvPrefix(os.Args[0], "AWS_GET_SECRET", flag.ContinueOnError)
+	fs.StringVar(&region, "region", DEFAULT_REGION, "The Amazon Region to use")
+	fs.StringVar(&roleArn, "role", "", "The ARN for the role to assume for Secret Access")
+	fs.IntVar(&timeout, "timeout", DEFAULT_TIMEOUT, "The amount of time to wait for any API call")
+	fs.StringVar(&sessionName, "session-name", DEFAULT_SESSION, "The name of the session for AWS STS")
+	fs.BoolVar(&internal.Verbose, "verbose", false, "Turn on verbose output")
 	// Parse all of the command line args into the specified vars with the defaults
-	flag.Parse()
-	internal.Verbose = verbose
+	err := fs.Parse(os.Args[1:])
+	if err == flag.ErrHelp {
+		os.Exit(3)
+	}
 
 	// Verify that the user did not overwrite the defaults with empty values
 	if len(region) == 0 || len(sessionName) == 0 {
-		flag.PrintDefaults()
+		fs.PrintDefaults()
 		panic("You must supply a valid region. -r REGION [-a ARN for ROLE -t TIMEOUT IN MILLISECONDS -n SESSION NAME]")
 	}
 
-	command = flag.Args()
+	// Support -- separating the two commands
+	command = fs.Args()
+	if len(command) > 0 && command[0] == "--" {
+		command = command[1:]
+	}
+
+	if internal.Verbose {
+		log.Println("Remaining arguments", command)
+	}
 	if len(command) == 0 {
 		panic(fmt.Sprintf("You must supply a next command to run, for example \n\n\t$ %s -- echo $SECRET\n", os.Args[0]))
 	}

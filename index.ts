@@ -32,20 +32,17 @@ export function wrapLambdaWithSecrets(
   layer: lambda.LayerVersion
 ) {
   lambda.addLayers(layer);
-  const args = Object.entries({
-    r: opts.region,
-    a: opts.role?.arn,
-    n: opts.role?.sessionName,
-    t: opts.timeout,
-    v: opts.verbose ? "" : undefined,
-  })
-    .filter(([_, value]) => typeof value === "string")
-    .map(([key, value]) => `-${key} ${value}`)
-    .join(" ");
-  lambda.addEnvironment(
-    "AWS_LAMBDA_EXEC_WRAPPER",
-    "/opt/aws-get-secret " + args
-  );
+  const env = {
+    AWS_GET_SECRET_REGION: opts.region,
+    AWS_GET_SECRET_ROLE: opts.role?.arn,
+    AWS_GET_SECRET_SESSION_NAME: opts.role?.sessionName,
+    AWS_GET_SECRET_TIMEOUT: opts.timeout,
+    AWS_GET_SECRET_VERBOSE: opts.verbose ? "true" : undefined,
+    AWS_LAMBDA_EXEC_WRAPPER: "/opt/aws-get-secret",
+  };
+  Object.entries(env)
+    .filter((pair): pair is [string,string] => typeof pair[1] === "string")
+    .forEach(([key, value]) => lambda.addEnvironment(key, value));
 }
 
 export function createLayerFromNodeModule(construct: Construct) {
