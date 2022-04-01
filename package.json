@@ -1,6 +1,6 @@
 {
   "name": "aws-get-secret-lambda",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Installs a AWS Lambda layer via CDK",
   "main": "index.js",
   "scripts": {
