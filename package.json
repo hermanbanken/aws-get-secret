@@ -1,13 +1,13 @@
 {
   "name": "aws-get-secret-lambda",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Installs a AWS Lambda layer via CDK",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "build:bin": "GOOS=linux GOARCH=amd64 go build -o opt/aws-get-secret ./",
     "build:dts": "tsc -p .",
-    "build:js": "esbuild --format=cjs index.ts >> index.js",
+    "build:js": "esbuild --format=cjs index.ts > index.js",
     "build": "npm run build:bin && npm run build:dts && npm run build:js"
   },
   "files": [
