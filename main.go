@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal"
-	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal/source"
+	"github.com/hermanbanken/aws-get-secret/internal"
+	"github.com/hermanbanken/aws-get-secret/internal/source"
 	"github.com/jnovack/flag"
 )
 

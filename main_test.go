@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal/mocksource"
+	"github.com/hermanbanken/aws-get-secret/internal/mocksource"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/hermanbanken/aws-secretmanager-wrapperscript/internal/source"
+	"github.com/hermanbanken/aws-get-secret/internal/source"
 )
 
 type MockSource map[string]*secretsmanager.GetSecretValueOutput

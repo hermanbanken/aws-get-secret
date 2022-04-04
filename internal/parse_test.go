@@ -19,7 +19,6 @@ func TestParse(t *testing.T) {
 			SecretID:    arn,
 			Destination: &DestinationEnv{"SECRET"},
 			Default:     "foobar",
-			Region:      "eu-west-1",
 			Template:    template.Must(template.New("secret").Parse("{{.}}")),
 		}, secret)
 	}
@@ -30,7 +29,6 @@ func TestParse(t *testing.T) {
 		assert.Equal(t, &Secret{
 			SecretID:    secretName,
 			Destination: &DestinationEnv{"SECRET"},
-			Region:      "eu-west-1",
 		}, secret)
 	}
 }
@@ -44,7 +42,6 @@ func TestParseEnv(t *testing.T) {
 		assert.Equal(t, []Secret{{
 			SecretID:    arn,
 			Destination: &DestinationEnv{"FOOBAR"},
-			Region:      "eu-west-1",
 			Default:     "foobar",
 		}, {
 			SecretID:    secretName,

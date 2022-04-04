@@ -1,4 +1,4 @@
-module github.com/hermanbanken/aws-secretmanager-wrapperscript
+module github.com/hermanbanken/aws-get-secret
 
 go 1.17
 
