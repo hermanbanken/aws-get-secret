@@ -69,3 +69,4 @@ export class SomeStack extends Stack {
 1. https://dev.to/aws-builders/getting-the-most-of-aws-lambda-free-compute-wrapper-scripts-3h4b
 1. https://docs.aws.amazon.com/lambda/latest/dg/runtimes-modify.html#runtime-wrapper
 1. https://github.com/binxio/gcp-get-secret
+1. https://www.hermanbanken.nl/2022/03/31/aws-get-secret/
