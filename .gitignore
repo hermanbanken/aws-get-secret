@@ -1,3 +1,5 @@
 node_modules
 opt/*
 *.js
+opt-node/*
+runtime-node/*.d.ts

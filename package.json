@@ -7,12 +7,14 @@
   "scripts": {
     "build:bin": "GOOS=linux GOARCH=amd64 go build -ldflags=\"-s -w\" -o opt/aws-get-secret ./",
     "build:dts": "tsc -p .",
-    "build:js": "esbuild --format=cjs index.ts > index.js",
-    "build": "npm run build:bin && npm run build:dts && npm run build:js"
+    "build:cdkjs": "esbuild --format=cjs index.ts > index.js",
+    "build:runtimejs": "esbuild --format=cjs --external:aws-sdk --bundle runtime-node/aws-get-secret.ts > opt-node/aws-get-secret && chmod +x opt-node/aws-get-secret",
+    "build": "npm run build:bin && npm run build:dts && npm run build:runtimejs && npm run build:cdkjs"
   },
   "files": [
     "README.md",
     "opt/aws-get-secret",
+    "opt-node/aws-get-secret",
     "index.js",
     "index.d.ts"
   ],
@@ -31,6 +33,7 @@
     "@tsconfig/node14": "^1.0.1",
     "@types/node": "^17.0.23",
     "aws-cdk-lib": "^2.7.0",
+    "aws-sdk": "^2.1106.0",
     "esbuild": "^0.14.29",
     "typescript": "^4.6.3"
   }

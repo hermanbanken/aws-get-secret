@@ -4,11 +4,11 @@ import { join } from "path";
 import type * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
 import type * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import type { Construct } from "constructs";
-import { Architecture, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Architecture, Runtime, RuntimeFamily } from "aws-cdk-lib/aws-lambda";
 
 type Lambda = Pick<
   lambda.Function | lambdaNodejs.NodejsFunction | lambdaPython.PythonFunction,
-  "addLayers" | "addEnvironment" | "stack"
+  "addLayers" | "addEnvironment" | "stack" | "runtime"
 >;
 
 type Opts = {
@@ -16,13 +16,19 @@ type Opts = {
   role?: { arn: string; sessionName?: string };
   timeout?: string;
   verbose?: boolean;
+  layerType?: "node" | "universal";
 };
 
 export function wrapLambdasWithSecrets(lambdas: Lambda[], opts: Opts) {
   if (lambdas.length === 0) {
     return;
   }
-  const layer = createLayerFromNodeModule(lambdas[0].stack);
+  const allNodeJS = lambdas.every(({ runtime }) => runtime.family === RuntimeFamily.NODEJS);
+
+  opts.layerType = opts.layerType || (allNodeJS ? "node" : "universal");
+  const layer = opts.layerType === "node"
+    ? createNodeLayerFromNodeModule(lambdas[0].stack)
+    : createLayerFromNodeModule(lambdas[0].stack);
   lambdas.forEach((lambda) => wrapLambdaWithSecrets(lambda, opts, layer));
 }
 
@@ -43,6 +49,18 @@ export function wrapLambdaWithSecrets(
   Object.entries(env)
     .filter((pair): pair is [string,string] => typeof pair[1] === "string")
     .forEach(([key, value]) => lambda.addEnvironment(key, value));
+}
+
+export function createNodeLayerFromNodeModule(construct: Construct) {
+  return new lambda.LayerVersion(construct, "aws-get-secret-node-layer", {
+    code: lambda.Code.fromAsset(join(__dirname, "opt-node")),
+    compatibleArchitectures: [Architecture.X86_64],
+    compatibleRuntimes: [
+      Runtime.NODEJS_10_X,
+      Runtime.NODEJS_12_X,
+      Runtime.NODEJS_14_X,
+    ],
+  });
 }
 
 export function createLayerFromNodeModule(construct: Construct) {
