@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
@@ -11,6 +12,7 @@ import (
 
 var arn1 = "arn:aws:secretsmanager:us-east-2:123456789012:secret:one"
 var arn2 = "arn:aws:secretsmanager:us-east-2:123456789012:secret:two"
+var arn3 = "arn:aws:secretsmanager:us-east-2:123456789012:secret:three"
 
 func TestPrepare(t *testing.T) {
 	source := mocksource.MockSource{
@@ -31,6 +33,13 @@ func TestPrepare(t *testing.T) {
 	}, outEnv) {
 		t.Fail()
 	}
+
+	// Non-existing secret
+	_, err = PrepareEnvAndFiles(context.TODO(), source, []string{
+		"FOOBAR3=aws:///" + arn3,
+	})
+	assert.Error(t, err)
+	assert.Equal(t, err.Error(), fmt.Sprintf("failed to retrieve secret \"%s\" due to error not found", arn3))
 }
 
 func strptr(str string) *string {

@@ -46,7 +46,12 @@ const [args, remainder] = parse(process.argv.slice(2), {
     const env = await Promise.all(lookups).then(list => Object.fromEntries(list.filter(isDefined)));
 
     // Run delegate command
-    execSync(remainder, { env: { ...process.env, ...env }  });
+    try {
+        execSync(remainder, { env: { ...process.env, ...env }  });
+    } catch (e) {
+        console.error(e);
+        process.exit(1);
+    }
 })();
 
 function isDefined<T>(v: T | undefined): v is T {

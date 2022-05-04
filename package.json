@@ -8,7 +8,7 @@
     "build:bin": "GOOS=linux GOARCH=amd64 go build -ldflags=\"-s -w\" -o opt/aws-get-secret ./",
     "build:dts": "tsc -p .",
     "build:cdkjs": "esbuild --format=cjs index.ts > index.js",
-    "build:runtimejs": "esbuild --format=cjs --external:aws-sdk --bundle runtime-node/aws-get-secret.ts > opt-node/aws-get-secret && chmod +x opt-node/aws-get-secret",
+    "build:runtimejs": "esbuild --format=cjs --platform=node --external:aws-sdk --bundle runtime-node/aws-get-secret.ts > opt-node/aws-get-secret && chmod +x opt-node/aws-get-secret",
     "build": "npm run build:bin && npm run build:dts && npm run build:runtimejs && npm run build:cdkjs"
   },
   "files": [
